@@ -27,10 +27,17 @@ m = size(X);
 % Hint: You might find the 'mean' and 'std' functions useful.
 %       
 
+sz_X1 = size(X,1);
+sz_X2 = size(X,2);
+
 X_mean = mean(X);
 mu = X_mean';
 
-X_norm_mu = [[X(:, 1) - mu(1)], [X(:, 2) - mu(2)], [X(:, 3) - mu(3)]];
+i = 1
+while (i <= sz_X2)
+    X_norm_mu(:, i) = X(:, i) - mu(i);
+    i = i + 1;
+end;
 
 X_std = std(X);
 sigma = X_std';
