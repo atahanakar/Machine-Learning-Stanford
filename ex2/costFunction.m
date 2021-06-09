@@ -20,12 +20,19 @@ grad = zeros(size(theta));
 % Note: grad should have the same dimensions as theta
 %
 
+% theta = m * n + 1 Matrix
+% X     = m * n Matrix;
 
+z = X * theta;
+p = predict(theta, X);
+g = sigmoid(z);
 
+% For a binary classification
+J = (1 / m) * sum(-y .* log(g) - (1 - y) .* log(1 - g));
 
+sz_theta = size(theta, 1);
 
-
-
+grad = (1 / m) * X' * (g - y);
 
 % =============================================================
 
