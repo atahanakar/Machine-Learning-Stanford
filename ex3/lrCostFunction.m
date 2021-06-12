@@ -37,12 +37,14 @@ grad = zeros(size(theta));
 %
 
 
+z = X * theta;
+g = sigmoid(z);
 
+% For a binary classification
+J = (1 / m) * sum(-y .* log(g) - (1 - y) .* log(1 - g)) + lambda / (2 * m) * (sum(theta .^ 2) - theta(1) .^ 2);
 
-
-
-
-
+grad = (1 / m) * X' * (g - y) + lambda / m * theta;
+grad(1) = (1 / m) * X(: , 1)' * (g - y);
 
 
 % =============================================================
