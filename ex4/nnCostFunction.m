@@ -24,7 +24,6 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
 
 % Setup some useful variables
 m = size(X, 1);
-         
 % You need to return the following variables correctly 
 J = 0;
 Theta1_grad = zeros(size(Theta1));
@@ -62,21 +61,64 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% 1. Randomly Initialize Weights (Thetas)
+% 2. Implement Forward Propagation
+% 3. Implement code to compute J(Q)
+% 4. Implement Backpropagation to compute d/dQ J(Q)
 
 
+% Steps 1- 3
+a_1 = [ones(size(X, 1), 1), X];
+z_2 = a_1 * Theta1';
+a_2 = [ones(size(z_2, 1), 1), sigmoid(z_2)];
+z_3 = a_2 * Theta2';
+a_3 = sigmoid(z_3);
+h_x = sigmoid(z_3);
+
+K = size(Theta2, 1);
+
+% We want y as one-hot code
+y_oh = zeros(size(y, 1), K);
+a_3_oh = zeros(size(y, 1), K);
+[dummy, a_3] = max(a_3, [], 2);
 
 
+for i = 1 : m;
+    for j = 1: K;
+        if(j == y(i))
+            y_oh(i, j) = 1;
+        end
+
+        if(j = a_3(i))
+            a_3_oh(i, j) = 1;
+        end
+    endfor
+endfor
 
 
+J = (1 / m) * sum(sum(-y_oh .* log(h_x) - (1 - y_oh) .* log(1 - h_x)));
 
+% Cost with Regularization
 
+thetaVec = [Theta1(:); Theta2(:)];
 
+J = (1 / m) * sum(sum(-y_oh .* log(h_x) - (1 - y_oh) .* log(1 - h_x))) + ...
+lambda / (2 * m) * (sum(thetaVec .^ 2) - sum(Theta1(:, 1) .^ 2) - sum(Theta2(:, 1) .^ 2)); 
 
+% Step 4: Back Propagation
+Delta = zeros();
+delta_3 = zeros(size(y_oh));
+delta_2 = zeros(size(y_oh));
 
+for i = 1 : m;
+    % Perform Forward propagation
+    % We already have the paramters from above
+    delta_3(i, :) = a_3_oh(i, :) - y_oh(i, :);
+    delta_2 = delta_3 * Theta2  .* sigmoidGradient(z_2);
 
+endfor
 
-
-
+delta_3
 
 
 
@@ -89,3 +131,5 @@ grad = [Theta1_grad(:) ; Theta2_grad(:)];
 
 
 end
+
+
