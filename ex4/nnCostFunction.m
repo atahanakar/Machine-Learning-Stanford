@@ -88,10 +88,6 @@ for i = 1 : m;
         if(j == y(i))
             y_oh(i, j) = 1;
         end
-
-        if(j = a_3(i))
-            a_3_oh(i, j) = 1;
-        end
     endfor
 endfor
 
@@ -106,21 +102,38 @@ J = (1 / m) * sum(sum(-y_oh .* log(h_x) - (1 - y_oh) .* log(1 - h_x))) + ...
 lambda / (2 * m) * (sum(thetaVec .^ 2) - sum(Theta1(:, 1) .^ 2) - sum(Theta2(:, 1) .^ 2)); 
 
 % Step 4: Back Propagation
-Delta = zeros();
-delta_3 = zeros(size(y_oh));
-delta_2 = zeros(size(y_oh));
 
 for i = 1 : m;
-    % Perform Forward propagation
-    % We already have the paramters from above
-    delta_3(i, :) = a_3_oh(i, :) - y_oh(i, :);
-    delta_2 = delta_3 * Theta2  .* sigmoidGradient(z_2);
+    % Perform Forward propagation We performed forward propagation above
+    % to get the J(Q)
+    a1 = [1, X(i, :)]; % 1 x 3 
+    a1 = a1'; % 3 x 1
+    z2 = Theta1 * a1;   % 4 x 1 
+    a2 = [1; sigmoid(z2)];  % 5 x 1
+    z3 = Theta2 * a2; % 4 x 1
+    a3 = sigmoid(z3);  % 4 x 1
+
+    % Get the deltas (We will add bias 1 to z for the sigmoid gradient)
+    delta_3 = a3 - y_oh(i, :)'; 
+
+    delta_2 = Theta2' * delta_3 .* sigmoidGradient([1; z2]); 
+    delta_2 = delta_2(2:end);
+
+
+    % Implement the generated Thetas (Ignoring bias deltas)
+    Theta1_grad = Theta1_grad + delta_2 * a1'; 
+    Theta2_grad = Theta2_grad + delta_3 * a2';
 
 endfor
 
-delta_3
+% Last Step
+Theta2_grad = (1 / m) * Theta2_grad; 
+Theta1_grad = (1 / m) * Theta1_grad;
 
 
+% Regularized Thetas
+Theta2_grad(:, 2 : end) = Theta2_grad(:, 2 : end) + lambda / m * ((Theta2(:, 2 : end)));
+Theta1_grad(:, 2 : end) = Theta1_grad(:, 2 : end) + lambda / m * ((Theta1(:, 2 : end)));
 
 % -------------------------------------------------------------
 
