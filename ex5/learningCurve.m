@@ -56,8 +56,8 @@ for i = 1 : m;
     % Weights for validation and training sets  
     theta_train = trainLinearReg(X(1: i, :), y(1: i), lambda);
     % Errors
-    error_train(i) = linearRegCostFunction(X(1: i, :), y(1: i), theta_train, 0)
-    error_val(i)   = linearRegCostFunction(Xval, yval, theta_train, 0)
+    error_train(i) = linearRegCostFunction(X(1: i, :), y(1: i), theta_train, 0);
+    error_val(i)   = linearRegCostFunction(Xval, yval, theta_train, 0);
 endfor
 
 % -------------------------------------------------------------
