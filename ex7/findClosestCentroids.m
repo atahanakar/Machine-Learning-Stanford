@@ -21,10 +21,22 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 
+% Number of samples
+m = size(X, 1);
 
+for i = 1 : m;
+    for j = 1 : K;
+        if(j == 1)
+            distance = sum((centroids(j, :) - X(i, :)) .^ 2);
+            idx(i) = j;
+        end
 
-
-
+        if(sum((centroids(j, :) - X(i, :)) .^ 2) < distance)
+            idx(i) = j;
+            distance = sum((centroids(j, :) - X(i, :)) .^ 2);
+        end
+    endfor  
+endfor
 
 
 % =============================================================
